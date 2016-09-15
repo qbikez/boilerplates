@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace webapi_netcore.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
