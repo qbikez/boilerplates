@@ -1,0 +1,86 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable",
+    "emitEntryPoint": true,
+    "copyToOutput": {
+      "include": "input"
+    }
+  },
+  "testRunner": "xunit",
+  "dependencies": {
+    "xunit": "2.2.0-*",
+    "dotnet-test-xunit": "2.2.0-*",
+    "Should": "1.1.20"
+  },
+  "frameworks": {
+    "net451": {
+      "buildOptions": {
+        "debugType": "full"
+      },
+      "frameworkAssemblies": {
+        "System.Configuration": "4.0.0.0"
+      }
+    },
+    "dnx451": {
+      "buildOptions": {
+        "debugType": "full"
+      }
+    },
+    "netcoreapp1.0": {
+      "buildOptions": {
+        "debugType": "portable"
+      },
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0-*"
+        }
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win8",
+        "net",
+        "dnx451"
+      ]
+    }
+  },
+  "//frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0-*"
+        }
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win8",
+        "net",
+        "dnx451"
+      ]
+    },
+    "netstandard1.5": {
+      "buildOptions": {
+        "define": [
+          "CORECLR"
+        ]
+      },
+      "imports": [
+        "netcoreapp1.0",
+        "dotnet5.4",
+        "portable-aspnetcore50+net45+win8+wp8+wpa81",
+        "net",
+        "dnx451"
+      ],
+      "dependencies": {
+        "System.Text.RegularExpressions": "4.0.10",
+        "System.Reflection": "4.0.10",
+        "System.Runtime.Extensions": "4.1.0",
+        "System.Console": "4.0.0"
+      }
+    }
+  },
+  "runtimes": {
+    "win7-x64": {}
+  }
+}
