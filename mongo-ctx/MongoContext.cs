@@ -25,7 +25,7 @@ namespace My.Namespace.Db
         }
 
         public IMongoDatabase Database => _client.GetDatabase(_dbName);
-        public IMongoCollection<Cache> SomeCollection => Database.GetCollection<Cache>("some_collection");
+        //public IMongoCollection<MyPOCO> SomeCollection => Database.GetCollection<MyPOCO>("some_collection");
         
         public void Dispose()
         {
