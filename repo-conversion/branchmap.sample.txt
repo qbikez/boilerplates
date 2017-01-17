@@ -1,0 +1,2 @@
+original_branch_name new_branch_name
+r:!hds to-remove # Spowoduje to zmianê nazwy wszystkich branchy, które nie pasuj¹ do regexu `hds` na `to-remove`.
