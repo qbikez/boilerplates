@@ -1,0 +1,6 @@
+include path/to/file
+exclude path/to/file
+rename from/file to/file
+include r:.*\.Core\..*/ # include directories with names matching "*.Core.*" 
+exclude r!:.*\MyProject\..*/ # exclude directories with names not matching "*.MyProject.*" 
+include sln:MyProject.Core/MyProject.Core.sln # include sln MyProject.Core/MyProject.Core.sln and all of its projects
