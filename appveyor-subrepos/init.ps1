@@ -1,0 +1,1 @@
+& .\$env:subrepo_name\scripts\init.ps1

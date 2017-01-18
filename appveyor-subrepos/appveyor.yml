@@ -1,0 +1,28 @@
+version: 1.0.{build}
+#clone_script:
+#- ps: 'write-host "cloning... this replaces default clone method"'
+
+install:
+- ps: .\clone-subrepo.ps1
+- ps: .\init.ps1
+#assembly_info:
+#  patch: true
+#  file: '**\AssemblyInfo.*'
+#  assembly_version: '{version}'
+#  assembly_file_version: '{version}'
+#  assembly_informational_version: '{version}'
+
+build_script:
+- ps: .\build.ps1
+test_script:
+- ps: .\test.appveyor.ps1
+
+on_success:
+- ps: 'write-host "event: build success!"'
+on_failure:
+- ps: 'write-host "event: build error!"'
+on_finish:
+- ps: 'write-host "event: build finish!"'
+
+artifacts:
+- path: artifacts
