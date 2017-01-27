@@ -47,8 +47,8 @@ function generate-filemapentry($src, $srcpath, $destpath, $action = "include") {
         $path = $srcpath.substring("sln:".Length)
         $sln = (get-item (join-path $src $path)).FullName
         $items = & "$psscriptroot\get-sln-items.ps1" -sln $sln
-        $items = $items | % { $_ } | % { "include $_" }
-        return $items + @($path)
+        $items = $items | % { get-relativepath -from $src -to $_ } | % { "$action $($_.replace("\","/"))" }
+        return @($items) + @("$action $path")
 
     }
     else {

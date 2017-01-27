@@ -22,7 +22,7 @@ $csprojs = $csprojs | % {
 
 
 $includes = $csprojs | % {
-    return "$($_.replace("\","/").substring("c:/legimi/legimi.default/".length))"
+    return "$_"
 }
 
 
