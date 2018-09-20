@@ -154,6 +154,12 @@ try {
         }
         $bound["from"] = $from
     }
+
+    $timesheetUrl = $null
+    if ($c -ne $null) {
+        $timesheetUrl = $c.timesheetUrl
+    }
+
     $outfile = "data/kanban-log.csv" 
     if (!(Test-Path "data")) { $null = mkdir "data" }
     $kblog = get-kanbanlog @bound
@@ -165,17 +171,22 @@ try {
     $archivepath = pathutils\Replace-FileExtension $outfile "-$(get-date -Format "yyyy-MM-dd")$suffix.csv"
     copy-item $outfile $archivepath
 
+    if ($timesheetUrl -eq $null) {
+        $timesheetUrl = read-host "Enter url to your online timesheet"
+    }
     $c = @{
         timestamp = (get-date)
         board = $board
+        timesheetUrl = $timesheetUrl
     }
     $c | export-cache -container "kanban-log"
     
     start $outfile
     if ((test-path "$psscriptroot\timesheet.xlsm")) { 
         #start "$psscriptroot\timesheet.xlsm"
-        
-        start https://1drv.ms/x/s!ArdV6JXbwi1Gi70HELmKQ0p9-yJ8Og # use office online
+        if ($c.timesheetUrl -ne $null) {
+            start $c.timesheetUrl # use office online
+        }
     }
 
 
