@@ -1,4 +1,4 @@
-﻿param($from = "auto", $board, [switch][bool] $removeBreaks = $true, $maxBreak = 20, $delimiter = $null, [switch][bool] $clearCredentials) 
+﻿param($from = "auto", $board, [switch][bool] $removeBreaks = $true, $maxBreak = 20, $delimiter = $null, $account, [switch][bool] $clearCredentials) 
 
 ipmo require
 req crayon
@@ -11,7 +11,7 @@ if ($delimiter -eq $null) {
 
 function get-kanbanlog {
     [cmdletbinding()]
-    param( $from, $board, [switch][bool] $removeBreaks = $true, $maxBreak = 20, $delimiter = $null, [switch][bool] $clearCredentials) 
+    param( $from, $board, [switch][bool] $removeBreaks = $true, $maxBreak = 20, $delimiter = $null, $account, [switch][bool] $clearCredentials) 
 
     cd $PSScriptRoot
 
@@ -38,7 +38,7 @@ function get-kanbanlog {
     $from = $fromD.ToString("yyyy-MM-ddTHH:mm:ss.sss") + "Z";# + "+$($fromD.Offset.Hours.ToString("00")):$($fromD.Offset.Minutes.ToString("00"))"  # "2015-10-22T22:00:00.000Z"
 
     log-progress "getting kanbanflow log from $fromD ($from)"
-    $cred = get-credentialscached -message "kanbanflow" -container "kanbanflow.com" -reset:$clearCredentials
+    $cred = get-credentialscached -message "kanbanflow" -container "$account.kanbanflow.com" -reset:$clearCredentials
     $user = $cred.UserName
     $pass = $cred.GetNetworkCredential().Password
 
@@ -129,14 +129,17 @@ function get-kanbanlog {
 pushd
 try {
     $bound = $PSBoundParameters
-    $c = import-cache -container "kanban-log"
+    $c = import-cache -container "$account.kanban-log"
 
     if ($board -eq $null) {
         if ($c -ne $null) {
             $board = $c.board
         } 
-        if ($board -eq $null) {
-            $board = read-host -Prompt "Board id"
+        if ($board -eq $null -or $clearCredentials) {
+            $re = read-host -Prompt "Board id [$board]"
+            if (![string]::IsNullOrEmpty($re)) { 
+                $board = $re
+            }
         }
         
         $bound["board"] = $board
@@ -160,8 +163,8 @@ try {
         $timesheetUrl = $c.timesheetUrl
     }
 
-    $outfile = "data/kanban-log.csv" 
-    if (!(Test-Path "data")) { $null = mkdir "data" }
+    $outfile = "data/$account/kanban-log.csv" 
+    if (!(Test-Path "data/$account")) { $null = mkdir "data/$account" }
     $kblog = get-kanbanlog @bound
     $kblog | Export-Csv -Path $outfile -NoTypeInformation -Encoding UTF8 -Delimiter $delimiter -Force 
     $suffix = $from
@@ -171,18 +174,21 @@ try {
     $archivepath = pathutils\Replace-FileExtension $outfile "-$(get-date -Format "yyyy-MM-dd")$suffix.csv"
     copy-item $outfile $archivepath
 
-    if ($timesheetUrl -eq $null) {
-        $timesheetUrl = read-host "Enter url to your online timesheet"
+    if ($timesheetUrl -eq $null -or $clearCredentials) {
+        $re = read-host "Enter url to your online timesheet"
+        if (![string]::IsNullOrEmpty($re)) { 
+            $timesheetUrl = $re
+        }
     }
     $c = @{
         timestamp = (get-date)
         board = $board
         timesheetUrl = $timesheetUrl
     }
-    $c | export-cache -container "kanban-log"
+    $c | export-cache -container "$account.kanban-log"
     
     start $outfile
-    if ((test-path "$psscriptroot\timesheet.xlsm")) { 
+    if ((test-path "$psscriptroot\$account\timesheet.xlsm")) { 
         #start "$psscriptroot\timesheet.xlsm"
         if ($c.timesheetUrl -ne $null) {
             start $c.timesheetUrl # use office online
